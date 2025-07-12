@@ -1,30 +1,33 @@
-# Laravel + Livewire Starter Kit
+# Organizations Contact Directory Management System
 
-## Introduction
+This Laravel-based system helps manage organizations and their associated contacts for internship or company tracking.
 
-Our Laravel + [Livewire](https://livewire.laravel.com) starter kit provides a robust, modern starting point for building Laravel applications with a Livewire frontend.
+## 🔹 Features
 
-Livewire is a powerful way of building dynamic, reactive, frontend UIs using just PHP. It's a great fit for teams that primarily use Blade templates and are looking for a simpler alternative to JavaScript-driven SPA frameworks like React and Vue.
+- **Organizations**: Add, edit, filter, deactivate
+- **Contacts**: Link contacts to organizations, mark primary
+- **Industries**: Classify with tags, filter by industry
+- **Dashboard**: Charts, stats, and filters for easy management
 
-This Livewire starter kit utilizes Livewire 3, Laravel Volt (optionally), TypeScript, Tailwind, and the [Flux UI](https://fluxui.dev) component library.
+## 📦 Built With
 
-If you are looking for the alternate configurations of this starter kit, they can be found in the following branches:
+- Laravel 10
+- Tailwind CSS
+- Livewire
+- Chart.js
+- PostgreSQL
 
-- [components](https://github.com/laravel/livewire-starter-kit/tree/components) - if Volt is not selected
-- [workos](https://github.com/laravel/livewire-starter-kit/tree/workos) - if WorkOS is selected for authentication
+## 🚀 Deployed on
 
-## Official Documentation
+- [Render](https://render.com)
 
-Documentation for all Laravel starter kits can be found on the [Laravel website](https://laravel.com/docs/starter-kits).
+## 📂 Project Setup
 
-## Contributing
-
-Thank you for considering contributing to our starter kit! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## License
-
-The Laravel + Livewire starter kit is open-sourced software licensed under the MIT license.
+```bash
+git clone https://github.com/Emmanuel1440/org-contact-directory.git
+cd org-contact-directory
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve

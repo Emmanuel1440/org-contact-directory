@@ -61,7 +61,7 @@
         <!-- Charts -->
         <div class="bg-zinc-800 p-4 rounded-lg shadow mt-6">
             <h4 class="text-white text-lg mb-4">Organizations by Industry</h4>
-            <canvas id="industryChart" class="w-full h-20"></canvas>
+            <!-- <canvas id="industryChart" class="w-full h-20"></canvas> -->
         </div>
         <div class="mt-6 bg-zinc-900 rounded-lg p-4 shadow">
     <h3 class="text-lg font-bold text-white mb-2">Recently Added Organizations</h3>
