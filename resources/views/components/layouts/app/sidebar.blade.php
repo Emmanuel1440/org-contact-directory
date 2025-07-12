@@ -1,132 +1,96 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
-    <head>
-        @include('partials.head')
-    </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+      x-data="{ sidebarOpen: false, darkMode: true }"
+      x-init="darkMode = localStorage.getItem('theme') === 'dark'"
+      x-bind:class="{ 'dark': darkMode }">
+<head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @include('partials.head')
+    @livewireStyles
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-white dark:bg-zinc-800 text-white min-h-screen flex">
 
-            <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
-                <x-app-logo />
+    <!-- Mobile Toggle Button -->
+    <div class="lg:hidden fixed top-4 left-4 z-50">
+        <button @click="sidebarOpen = !sidebarOpen"
+                class="p-2 rounded bg-zinc-800 text-white hover:bg-zinc-700 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor">
+                <path :class="{ 'hidden': sidebarOpen }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 6h16M4 12h16M4 18h16"/>
+                <path :class="{ 'hidden': !sidebarOpen }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 h-screen bg-zinc-900 border-r border-zinc-700 fixed z-40 transform lg:translate-x-0 transition-transform duration-200 ease-in-out"
+           :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-700">
+            <div class="text-xl font-extrabold">OCM System</div>
+            <!-- Dark Mode Toggle -->
+            <button @click="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')"
+                    class="text-white hover:text-yellow-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 3v1m0 16v1m8.66-11.34l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 4.66l-.71-.71M4.05 4.05l-.71-.71M12 5a7 7 0 000 14 7 7 0 000-14z"/>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="mt-4 px-4 space-y-2 text-sm">
+            <a href="{{ route('dashboard') }}"
+               class="flex items-center gap-2 px-4 py-2 rounded hover:bg-zinc-800 hover:text-blue-400 {{ request()->routeIs('dashboard') ? 'bg-zinc-800 font-bold text-blue-400' : '' }}">
+                <i data-lucide="home" class="w-4 h-4"></i> Dashboard
             </a>
+            <a href="{{ route('organizations.index') }}"
+               class="flex items-center gap-2 px-4 py-2 rounded hover:bg-zinc-800 hover:text-blue-400 {{ request()->routeIs('organizations.*') ? 'bg-zinc-800 font-bold text-blue-400' : '' }}">
+                <i data-lucide="buildings" class="w-4 h-4"></i> Organizations
+            </a>
+            <a href="{{ route('contacts.index') }}"
+               class="flex items-center gap-2 px-4 py-2 rounded hover:bg-zinc-800 hover:text-blue-400 {{ request()->routeIs('contacts.*') ? 'bg-zinc-800 font-bold text-blue-400' : '' }}">
+                <i data-lucide="user" class="w-4 h-4"></i> Contacts
+            </a>
+            <a href="{{ route('industries.index') }}"
+               class="flex items-center gap-2 px-4 py-2 rounded hover:bg-zinc-800 hover:text-blue-400 {{ request()->routeIs('industries.*') ? 'bg-zinc-800 font-bold text-blue-400' : '' }}">
+                <i data-lucide="tag" class="w-4 h-4"></i> Industries
+            </a>
+        </nav>
 
-            <flux:navlist variant="outline">
-                <flux:navlist.group :heading="__('Platform')" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                </flux:navlist.group>
-            </flux:navlist>
+        <div class="px-4 py-4 border-t border-zinc-700 text-sm">
+            @auth
+                <div class="mb-3 text-zinc-400">
+                    👤 {{ auth()->user()->name }}
+                </div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit"
+                            class="w-full text-left px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white">
+                        🚪 Log Out
+                    </button>
+                </form>
+            @endauth
+        </div>
+    </aside>
 
-            <flux:spacer />
-
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
-
-            <!-- Desktop User Menu -->
-            <flux:dropdown class="hidden lg:block" position="bottom" align="start">
-                <flux:profile
-                    :name="auth()->user()->name"
-                    :initials="auth()->user()->initials()"
-                    icon:trailing="chevrons-up-down"
-                />
-
-                <flux:menu class="w-[220px]">
-                    <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
-                                        {{ auth()->user()->initials() }}
-                                    </span>
-                                </span>
-
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
-                        </flux:menu.item>
-                    </form>
-                </flux:menu>
-            </flux:dropdown>
-        </flux:sidebar>
-
-        <!-- Mobile User Menu -->
-        <flux:header class="lg:hidden">
-            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
-
-            <flux:spacer />
-
-            <flux:dropdown position="top" align="end">
-                <flux:profile
-                    :initials="auth()->user()->initials()"
-                    icon-trailing="chevron-down"
-                />
-
-                <flux:menu>
-                    <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
-                                        {{ auth()->user()->initials() }}
-                                    </span>
-                                </span>
-
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
-                        </flux:menu.item>
-                    </form>
-                </flux:menu>
-            </flux:dropdown>
-        </flux:header>
-
+    <!-- Main Content -->
+    <main class="flex-1 p-6 ml-0 lg:ml-64 transition-all duration-200">
         {{ $slot }}
+    </main>
 
-        @fluxScripts
-    </body>
+    @livewireScripts
+    @fluxScripts
+
+    <!-- Lucide Icons -->
+    <script type="module">
+        import lucide from 'https://unpkg.com/lucide@latest/dist/esm/lucide.js';
+        lucide.createIcons();
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @stack('scripts')
+</body>
 </html>
