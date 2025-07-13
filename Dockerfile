@@ -38,10 +38,13 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
 # Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Install Laravel dependencies
+RUN composer install --no-dev --optimize-autoloader && \
+    php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan config:cache && \
+    php artisan migrate --force
 
-# 🔥 RUN Laravel migrations (adds sessions table and all others)
-RUN php artisan migrate --force
 
 # Expose Apache port
 EXPOSE 80
