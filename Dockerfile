@@ -32,13 +32,16 @@ WORKDIR /var/www/html
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set correct permissions for storage and bootstrap cache
+# Set correct permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
+
+# 🔥 RUN Laravel migrations (adds sessions table and all others)
+RUN php artisan migrate --force
 
 # Expose Apache port
 EXPOSE 80
